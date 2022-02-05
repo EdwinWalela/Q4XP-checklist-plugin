@@ -1,6 +1,9 @@
 
 #include "XPLMDisplay.h"
 #include "XPLMGraphics.h"
+#include "XPLMMenus.h"
+#include "XPLMPlugin.h"
+
 #include <string.h>
 #include <stdio.h>
 #if IBM
@@ -19,9 +22,13 @@
 #endif
 
 
+int menu_container_id; // Index of menu item in the plugins menu
+XPLMMenuID menu_id; // menu container to append menu items to
+
 static XPLMWindowID g_window;
 
 void draw(XPLMWindowID window_id, void * in_refcon);
+void menu_handler(void *menu_ref, void *item_ref);
 
 int handle_mouse(XPLMWindowID window_id, int x, int y, int is_down, void * in_refcon) { return 1; }
 int dummy_mouse_handler(XPLMWindowID window_id, int x, int y, int is_down, void *in_refcon) { return xplm_CursorDefault; }
@@ -38,6 +45,14 @@ PLUGIN_API int XPluginStart(
 	strcpy(outName, "Q4XPChecklistPlugin");
 	strcpy(outSig, "blizzard.checklist.q4xp");
 	strcpy(outDesc, "A checklist plugin for FlyJsim Q4XP");
+	
+	menu_container_id = XPLMAppendMenuItem(XPLMFindPluginsMenu(), "Q4XP Checklist", 0, 0);
+	menu_id = XPLMCreateMenu("Q4XP Checklist", XPLMFindPluginsMenu(), menu_container_id, menu_handler, NULL);
+	XPLMAppendMenuItem(menu_id, "Reload Plugins", (void *)"Menu Item 1", 1);
+	XPLMAppendMenuSeparator(menu_id);
+	XPLMAppendMenuItem(menu_id, "Toggle Checklist", (void *)"Menu Item 2", 1);
+	
+
 
 	// Left,Bottom,Right,Top
 	int desktop_bounds[4];
@@ -53,7 +68,7 @@ PLUGIN_API int XPluginStart(
 	params.bottom = desktop_bounds[1] + 100;
 	params.right = desktop_bounds[0] + 400;
 	params.top = desktop_bounds[1] + 300;
-	params.visible = 1;
+	params.visible = 0;
 	params.drawWindowFunc = draw;
 	params.handleMouseClickFunc = handle_mouse;
 	params.handleRightClickFunc = dummy_mouse_handler;
@@ -69,7 +84,10 @@ PLUGIN_API int XPluginStart(
 	XPLMSetWindowPositioningMode(g_window, xplm_WindowPositionFree, -1);
 	// keep size constant as window resives. Left and top edges in same place relative to the window
 	XPLMSetWindowGravity(g_window, 0, 1, 0, 1); 
+
 	XPLMSetWindowTitle(g_window, "Q4XP Checklist");
+
+	XPLMSetWindowResizingLimits(g_window, 500, 600, 600, 900);
 
 	return (g_window != NULL);
 }
@@ -95,6 +113,19 @@ void draw(XPLMWindowID window_id, void *refcon)
 		1,
 		0
 	);
+
+	// Set window size limits
 }
 
-
+void menu_handler(void *menu_ref, void *item_ref)
+{
+	if(!strcmp((const char *)item_ref, "Menu Item 1"))
+	{
+		XPLMReloadPlugins();
+	}
+	else if (!strcmp((const char *)item_ref, "Menu Item 2"))
+	{
+		// Show plugin
+		XPLMSetWindowIsVisible(g_window, 1);
+	}
+}
