@@ -24,11 +24,15 @@
 	#error This is made to be compiled against the XPLM300 SDK
 #endif
 
+float col_white[] = { 1.0,1.0,1.0 };
+
 
 int menu_container_id; // Index of menu item in the plugins menu
 XPLMMenuID menu_id; // menu container to append menu items to
 
 static XPLMWindowID g_window;
+
+
 
 void draw(XPLMWindowID window_id, void * in_refcon);
 void menu_handler(void *menu_ref, void *item_ref);
@@ -89,7 +93,7 @@ PLUGIN_API int XPluginStart(
 
 	XPLMSetWindowTitle(g_window, "Q4XP Checklist");
 
-	XPLMSetWindowResizingLimits(g_window, 500, 600, 600, 900);
+	XPLMSetWindowResizingLimits(g_window, 450, 900, 450, 900);
 
 	return (g_window != NULL);
 }
@@ -116,7 +120,29 @@ void draw(XPLMWindowID window_id, void *refcon)
 		0
 	);
 
-	// Set window size limits
+	int window_left_offset, window_top_offset, window_right_offset, window_bottom_offset;
+
+	XPLMGetWindowGeometry(window_id, &window_left_offset, &window_top_offset, &window_right_offset, &window_bottom_offset);
+	
+	
+	int items_left_offset = window_left_offset + 20;
+
+	int items_top_offset = window_top_offset - 20;
+
+	// Space between checklist items
+	int items_bottom_margin = 30; 
+
+	XPLMDrawString(col_white, items_left_offset + 140, items_top_offset - 10, (char *)"PRE FLIGHT CHECKLIST", NULL, xplmFont_Proportional);
+
+	int first_item_gap = 0;
+
+	for (int i = 0; i < sizeof(PREFLIGHT_ITEMS) / sizeof(PREFLIGHT_ITEMS[0]); i++) {
+		
+		// Add extra spacing for first item
+		if (i == 0) { first_item_gap = 40; } else { first_item_gap = 0;}
+
+		XPLMDrawString(col_white, items_left_offset, (items_top_offset - 60 ) - (i*(items_bottom_margin+first_item_gap)), (char *)PREFLIGHT_ITEMS[i], NULL, xplmFont_Proportional);
+	}
 }
 
 void menu_handler(void *menu_ref, void *item_ref)
