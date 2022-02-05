@@ -3,7 +3,6 @@
 #include "XPLMGraphics.h"
 #include <string.h>
 #include <stdio.h>
-#include <st>
 #if IBM
 	#include <windows.h>
 #endif
@@ -23,9 +22,8 @@
 static XPLMWindowID g_window;
 
 void draw(XPLMWindowID window_id, void * in_refcon);
-int handle_mouse(XPLMWindowID window_id, int x, int y, int is_down, void * in_refcon);
-void recieve_main_monitor_bounds(int monitorIndex, int leftBx, int topBx, int rightBx, int bottomBx, void * refcon);
 
+int handle_mouse(XPLMWindowID window_id, int x, int y, int is_down, void * in_refcon) { return 1; }
 int dummy_mouse_handler(XPLMWindowID window_id, int x, int y, int is_down, void *in_refcon) { return xplm_CursorDefault; }
 XPLMCursorStatus dummy_cursor_status_handler(XPLMWindowID window_id, int x, int y, void * in_refcon) { return 0; }
 int dummy_wheel_handler(XPLMWindowID window_id, int x, int y, int wheel, int clicks, void * in_refcon) { return 0; }
@@ -74,5 +72,29 @@ PLUGIN_API int XPluginStart(
 	XPLMSetWindowTitle(g_window, "Q4XP Checklist");
 
 	return (g_window != NULL);
-
 }
+
+PLUGIN_API void XPluginStop(void)
+{
+	XPLMDestroyWindow(g_window);
+	g_window = NULL;
+}
+
+PLUGIN_API void XPluginDisable(void){}
+PLUGIN_API int XPluginEnable(void) { return 1; }
+PLUGIN_API void XPluginRecieveMessage(XPLMPluginID from,int msg, void *param){}
+
+void draw(XPLMWindowID window_id, void *refcon) 
+{
+	XPLMSetGraphicsState(
+		0,
+		0,
+		0,
+		0,
+		1,
+		1,
+		0
+	);
+}
+
+
