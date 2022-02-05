@@ -48,8 +48,8 @@
     <TargetExt>.xpl</TargetExt>
     <GenerateManifest>false</GenerateManifest>
     <TargetName>win</TargetName>
-    <IncludePath>K:\projects\XP\X-Plane-11-Window-API-Sample\SDK\CHeaders;$(IncludePath)</IncludePath>
-    <LibraryPath>K:\projects\XP\X-Plane-11-Window-API-Sample\SDK\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>K:\projects\XP\Q4XP-checklist\SDK\CHeaders\XPLM;$(IncludePath)</IncludePath>
+    <LibraryPath>K:\projects\XP\Q4XP-checklist\SDK\Libraries\Win;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>.\Debug\plugins\$(TargetName)\64\</OutDir>
@@ -149,7 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="X-Plane-11-Window-API-Sample.cpp" />
+    <ClCompile Include="window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
