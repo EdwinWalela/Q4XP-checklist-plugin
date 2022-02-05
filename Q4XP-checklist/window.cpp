@@ -4,6 +4,9 @@
 #include "XPLMMenus.h"
 #include "XPLMPlugin.h"
 
+
+#include "checklist_items.h"
+
 #include <string.h>
 #include <stdio.h>
 #if IBM
@@ -52,7 +55,6 @@ PLUGIN_API int XPluginStart(
 	XPLMAppendMenuSeparator(menu_id);
 	XPLMAppendMenuItem(menu_id, "Toggle Checklist", (void *)"Menu Item 2", 1);
 	
-
 
 	// Left,Bottom,Right,Top
 	int desktop_bounds[4];

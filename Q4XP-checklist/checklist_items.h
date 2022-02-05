@@ -1,0 +1,37 @@
+#pragma once
+
+
+static const char * PREFLIGHT_ITEMS[] = { 
+	"PARKING BRAKE",
+	"DOORS",
+	"BATTERIES (MSTR,MAIN,AUX,STDBY)",
+	"MAIN BUS TIE",
+	"LANDING GEAR & PINS",
+	"CIRCUIT BREAKERS",
+	"(ARCDU) RADIOS",
+	"PRESSURIZATION PANEL",
+	"ENGINE START 1 & 2",
+	"PACKS",
+	"RECIRC FAN",
+	"BLEEDS / BLEED AIR",
+	"PASSENGER SIGNS",
+	"EMERGENCY LIGHTS",
+	"START BOARDING",
+};
+
+static const char * PREFLIGHT_ITEMS_VALUE[] = {
+	"SET",
+	"OPEN",
+	"ON",
+	"TIE",
+	"CHECKED 3",
+	"CHECKED IN",
+	"ON",
+	"SET LDG ALT",
+	"NORM",
+	"AUTO",
+	"ON",
+	"ON",
+	"ARMED",
+	"-------"
+};
