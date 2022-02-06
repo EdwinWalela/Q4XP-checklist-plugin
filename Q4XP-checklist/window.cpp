@@ -29,6 +29,7 @@ float col_white[] = { 1.0,1.0,1.0 };
 
 int menu_container_id; // Index of menu item in the plugins menu
 XPLMMenuID menu_id; // menu container to append menu items to
+int char_width;  // character width
 
 static XPLMWindowID g_window;
 
@@ -36,6 +37,7 @@ static XPLMWindowID g_window;
 
 void draw(XPLMWindowID window_id, void * in_refcon);
 void menu_handler(void *menu_ref, void *item_ref);
+void remove_spaces(char* s);
 
 int handle_mouse(XPLMWindowID window_id, int x, int y, int is_down, void * in_refcon) { return 1; }
 int dummy_mouse_handler(XPLMWindowID window_id, int x, int y, int is_down, void *in_refcon) { return xplm_CursorDefault; }
@@ -93,7 +95,7 @@ PLUGIN_API int XPluginStart(
 
 	XPLMSetWindowTitle(g_window, "Q4XP Checklist");
 
-	XPLMSetWindowResizingLimits(g_window, 450, 900, 450, 900);
+	XPLMSetWindowResizingLimits(g_window, 450, 920, 450, 920);
 
 	return (g_window != NULL);
 }
@@ -130,18 +132,56 @@ void draw(XPLMWindowID window_id, void *refcon)
 	int items_top_offset = window_top_offset - 20;
 
 	// Space between checklist items
-	int items_bottom_margin = 30; 
+	int items_bottom_margin = 28; 
 
+	// Draw checklist title
 	XPLMDrawString(col_white, items_left_offset + 140, items_top_offset - 10, (char *)"PRE FLIGHT CHECKLIST", NULL, xplmFont_Proportional);
 
-	int first_item_gap = 0;
+	XPLMGetFontDimensions(xplmFont_Proportional, &char_width, NULL, NULL);
 
 	for (int i = 0; i < sizeof(PREFLIGHT_ITEMS) / sizeof(PREFLIGHT_ITEMS[0]); i++) {
-		
-		// Add extra spacing for first item
-		if (i == 0) { first_item_gap = 40; } else { first_item_gap = 0;}
+		char * item = PREFLIGHT_ITEMS[i];
+		char * value = PREFLIGHT_ITEMS_VALUE[i];
+		//char * item = "LANDING GEAR";
+		//char * value = "CHECKED ON";
+		int item_end, value_begin, value_length, dots_length;
 
-		XPLMDrawString(col_white, items_left_offset, (items_top_offset - 60 ) - (i*(items_bottom_margin+first_item_gap)), (char *)PREFLIGHT_ITEMS[i], NULL, xplmFont_Proportional);
+		// calculate item end
+		int item_width = XPLMMeasureString(xplmFont_Proportional, item, strlen(item));
+		
+		item_end = items_left_offset + item_width;
+
+		// calculate value length
+		value_length = XPLMMeasureString(xplmFont_Proportional, value, strlen(value));
+		
+		// calculate value begin
+		value_begin = window_right_offset- 20 - value_length;
+
+		// calculate number of dots to place
+		dots_length = value_begin - item_end;
+
+		if (i == 14) {
+			// Draw separator
+			XPLMDrawString(col_white, items_left_offset, (items_top_offset - 40) - (i*(items_bottom_margin)), (char *)item, NULL, xplmFont_Proportional);
+
+		}else{
+			// Draw item
+			XPLMDrawString(col_white, items_left_offset, (items_top_offset - 40) - (i*(items_bottom_margin)), (char *)item, NULL, xplmFont_Proportional);
+
+			// Draw dots
+			for (int d = 0; d < dots_length; d++) {
+				XPLMDrawString(col_white, item_end + (d + 2), (items_top_offset - 40) - (i*(items_bottom_margin)), (char *)" . ", NULL, xplmFont_Proportional);
+
+			}
+
+			// Draw value
+			XPLMDrawString(col_white, value_begin, (items_top_offset - 40) - (i*(items_bottom_margin)), (char *)value, NULL, xplmFont_Proportional);
+
+		}
+
+
+
+		
 	}
 }
 
@@ -149,11 +189,34 @@ void menu_handler(void *menu_ref, void *item_ref)
 {
 	if(!strcmp((const char *)item_ref, "Menu Item 1"))
 	{
+		
 		XPLMReloadPlugins();
 	}
 	else if (!strcmp((const char *)item_ref, "Menu Item 2"))
 	{
 		// Show plugin
 		XPLMSetWindowIsVisible(g_window, 1);
+		
 	}
+}
+
+void remove_spaces(char *str)
+{
+	// To keep track of non-space character count
+	int count = 0;
+
+	// Traverse the given string. If current character
+	// is not space, then place it at index 'count++'
+	for (int i = 0; str[i]; i++)
+		if (str[i] != ' ')
+			str[count++] = str[i]; // here count is
+								   // incremented
+	str[count] = '\0';
+}
+
+
+void find_value_start(char *value,int end) {
+	int length = strlen(value);
+
+	
 }
